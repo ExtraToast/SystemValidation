@@ -4,6 +4,7 @@ MODULE Boat
   ASSIGN
     init(state) := outUp;
 
+
 MODULE Door
   VAR
     state : {open, closed};
@@ -21,7 +22,6 @@ MODULE Door
           state = open : TRUE;
           state = closed : lastOpened;
         esac;
-
 
 MODULE main
   VAR
@@ -50,16 +50,25 @@ MODULE main
 
     capacity := 2 - boats_inside;
 
+    b1_queued := (b1.state = outUp & doorUp.state = open) | (b1.state = outDown & doorDown.state = open);
+    b2_queued := (b2.state = outUp & doorUp.state = open) | (b2.state = outDown & doorDown.state = open);
+    b3_queued := (b3.state = outUp & doorUp.state = open) | (b3.state = outDown & doorDown.state = open);
+
+    -- priority entry first e1 then e2 then e3
+    e1 := b1_queued & (capacity > 0);
+    e2 := b2_queued & (capacity - (case e1 : 1; TRUE : 0; esac) > 0);
+    e3 := b3_queued & (capacity - (case e1 : 1; TRUE : 0; esac) - (case e2 : 1; TRUE : 0; esac) > 0);
+
   ASSIGN
     init(doorDown.state) := closed;
     init(doorDown.lastOpened) := FALSE;
     init(doorUp.state) := open;
     init(doorUp.lastOpened) := TRUE;
 
+    -- Enter only if they have priority
     next(b1.state) :=
       case
-          b1.state = outUp & capacity > 0 & doorUp.state = open : inside;
-          b1.state = outDown & capacity > 0 & doorDown.state = open : inside;
+          e1 : inside;
 
           b1.state = inside & doorUp.state = open & doorUp.lastOpened = FALSE : outUp;
           b1.state = inside & doorDown.state = open & doorDown.lastOpened = FALSE : outDown;
@@ -69,8 +78,7 @@ MODULE main
 
     next(b2.state) :=
       case
-          b2.state = outUp & capacity > 0 & doorUp.state = open : inside;
-          b2.state = outDown & capacity > 0 & doorDown.state = open : inside;
+          e2 : inside;
 
           b2.state = inside & doorUp.state = open & doorUp.lastOpened = FALSE : outUp;
           b2.state = inside & doorDown.state = open & doorDown.lastOpened = FALSE : outDown;
@@ -80,8 +88,7 @@ MODULE main
 
     next(b3.state) :=
       case
-          b3.state = outUp & capacity > 0 & doorUp.state = open : inside;
-          b3.state = outDown & capacity > 0 & doorDown.state = open : inside;
+          e3 : inside;
 
           b3.state = inside & doorUp.state = open & doorUp.lastOpened = FALSE : outUp;
           b3.state = inside & doorDown.state = open & doorDown.lastOpened = FALSE : outDown;
@@ -89,11 +96,12 @@ MODULE main
           TRUE : b3.state;
         esac;
 
+  -- never open both doors in the next step
   TRANS !(next(doorUp.state) = open & next(doorDown.state) = open)
 
-  -- If there is a door open, then there must either be a ship waiting infront of it, or there must be a boat inside the lock
+  -- A door must only open if a boat is waiting outside of it.
   TRANS doorUp.state = open -> (b1.state = outUp | b2.state = outUp | b3.state = outUp | capacity < 2)
   TRANS doorDown.state = open -> (b1.state = outDown | b2.state = outDown | b3.state = outDown | capacity < 2)
 
-  -- Capacity may not be exceeded
-  TRANS next(capacity) >= 0;
+  -- The capacity must range from 0 to 2
+  INVAR capacity >= 0 & capacity <= 2
