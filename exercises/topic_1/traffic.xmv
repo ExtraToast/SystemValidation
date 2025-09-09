@@ -1,0 +1,34 @@
+MODULE TrafficLight
+  VAR
+    state : {green, orange, red};
+
+  ASSIGN
+    init(state) := red;
+    next(state) := case
+                       state = red : red;
+                       state = red : green;
+                       state = green : green;
+                       state = orange : orange;
+                       state = orange : red;
+                     esac;
+
+MODULE main
+  VAR
+    state : {green, orange, red};
+    t1 : TrafficLight();
+    t2 : TrafficLight();
+
+  DEFINE
+    light1 := t1.state;
+    light2 := t2.state;
+
+  -- Prevent both lights from both turning green in the same transition
+  TRANS !(next(light1) = green & next(light2) = green)
+
+  -- the two traffic lights are never orange at the same time.
+  LTLSPEC G !(light1 = green & light2 = green)
+
+  -- always when light1 turns orange, eventually light2 turns orange. Eventually is written as F in LTL.
+  -- Globally when light1 = orange then eventually there exists a state where light2 = orange
+  LTLSPEC G (light1 = orange -> F (light2 = orange))
+

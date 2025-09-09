@@ -1,0 +1,6 @@
+services:
+  nusmv:
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - './exercises:/exercises'
