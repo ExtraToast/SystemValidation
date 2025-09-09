@@ -1,55 +1,54 @@
-MODULE Vehicle
-  VAR
-    state : {wait, move, none};
-
-
 MODULE main
   VAR
     bridge : {open, closing, closed, opening, opensoon};
-    boat : Vehicle();
-    car : Vehicle();
-    state : {wait, move, none};
-
+    boat : {wait, move, none};
+    car : {wait, move, none};
   ASSIGN
     init(bridge) := closed;
-    init(boat.state) := none;
-    init(car.state) := none;
+    init(boat) := none;
+    init(car) := none;
 
-    next(boat.state) :=
+    next(boat) :=
       case
-          boat.state = none : none;
-          boat.state = none : wait;
-          boat.state = wait & bridge = open : move;
-          boat.state = wait : wait;
-          boat.state = move : move;
-          boat.state = move : none;
-        esac;
+          boat = none : {none, wait};
+          boat = wait & bridge = open : move;
+          boat = wait : wait;
+          boat = move : {move, none};
+      esac;
 
-    next(car.state) :=
+    next(car) :=
       case
-          car.state = none : none;
-          car.state = none : wait;
-          car.state = wait & bridge = closed : move;
-          car.state = wait : wait;
-          car.state = move : move;
-          car.state = move : none;
-        esac;
+        car = none :{none, wait};
+        car = wait & bridge = closed : move;
+        car = wait : wait;
+        car = move :{move, none};
+      esac;
 
     next(bridge) :=
       case
-          bridge = closed & boat.state = wait : opensoon;
-          bridge = opensoon & (car.state = none | car.state = wait) : opening;
-          bridge = opensoon : opensoon;
-          bridge = opening : open;
-          bridge = opening : opening;
-          bridge = open & (boat.state = none | boat.state = wait) : closing;
-          bridge = open : open;
-          bridge = closing : closing;
-          bridge = closing : closed;
-          bridge = closed : closed;
-        esac;
+        bridge = closed & boat = wait : opensoon;
+        bridge = opensoon & (car = none | car = wait) : opening;
+        bridge = opensoon : opensoon;
+        bridge = opening :{open, opening};
+        bridge = open & (boat = none | boat = wait) : closing;
+        bridge = open : open;
+        bridge = closing :{closing, closed};
+        bridge = closed : closed;
+      esac;
 
-  -- Verify using simulation that indeed the bridge cannot close or open while traffic is still moving.
+    -- Verify using simulation that indeed the bridge cannot close or open while traffic is still moving.
+    LTLSPEC G (bridge = closing -> boat != move)
+    LTLSPEC G (bridge = opening -> car != move)
+    LTLSPEC G (bridge in {opening, closing} -> (car != move & boat != move))
 
-  LTLSPEC G bridge = closing -> boat.state != move
-  LTLSPEC G bridge = opening -> car.state != move
+    TRANS !(next(bridge) = closing & next(boat) = move)
+    TRANS !(next(bridge) = opening & next(car) = move)
+    TRANS !(bridge in {opening, closing} & (car = move | boat = move))
+
+    -- Use LTL to verify the opening and closing protocol of the bridge:
+    -- namely a loop closed -> opening -> open -> closing -> closed.
+    LTLSPEC ((bridge = closed) U (bridge = closing) U (bridge = open) U (bridge = opening) U (bridge = closed))
+
+    -- if a boat never arrives, the bridge will never open
+    -- if the bridge opens there must be a boat
+    LTLSPEC G (bridge = open -> boat != none)
