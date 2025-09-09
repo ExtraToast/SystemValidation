@@ -1,0 +1,99 @@
+MODULE Boat
+  VAR
+    state : {outUp, inside, outDown};
+  ASSIGN
+    init(state) := outUp;
+
+MODULE Door
+  VAR
+    state : {open, closed};
+    lastOpened : boolean;
+  ASSIGN
+    next(state) :=
+      case
+          state = closed & lastOpened = TRUE : closed;
+          state = closed & lastOpened = FALSE : open;
+          state = open : closed;
+        esac;
+
+    next(lastOpened) :=
+      case
+          state = open : TRUE;
+          state = closed : lastOpened;
+        esac;
+
+
+MODULE main
+  VAR
+    doorUp : Door();
+    doorDown : Door();
+    doorState : {open, closed};
+    boatState : {outUp, inside, outDown};
+    b1 : Boat();
+    b2 : Boat();
+    b3 : Boat();
+
+  DEFINE
+    boats_inside :=
+    (case
+         b1.state = inside : 1;
+         TRUE : 0;
+       esac) +
+    (case
+         b2.state = inside : 1;
+         TRUE : 0;
+       esac) +
+    (case
+         b3.state = inside : 1;
+         TRUE : 0;
+       esac);
+
+    capacity := 2 - boats_inside;
+
+  ASSIGN
+    init(doorDown.state) := closed;
+    init(doorDown.lastOpened) := FALSE;
+    init(doorUp.state) := open;
+    init(doorUp.lastOpened) := TRUE;
+
+    next(b1.state) :=
+      case
+          b1.state = outUp & capacity > 0 & doorUp.state = open : inside;
+          b1.state = outDown & capacity > 0 & doorDown.state = open : inside;
+
+          b1.state = inside & doorUp.state = open & doorUp.lastOpened = FALSE : outUp;
+          b1.state = inside & doorDown.state = open & doorDown.lastOpened = FALSE : outDown;
+
+          TRUE : b1.state;
+        esac;
+
+    next(b2.state) :=
+      case
+          b2.state = outUp & capacity > 0 & doorUp.state = open : inside;
+          b2.state = outDown & capacity > 0 & doorDown.state = open : inside;
+
+          b2.state = inside & doorUp.state = open & doorUp.lastOpened = FALSE : outUp;
+          b2.state = inside & doorDown.state = open & doorDown.lastOpened = FALSE : outDown;
+
+          TRUE : b2.state;
+        esac;
+
+    next(b3.state) :=
+      case
+          b3.state = outUp & capacity > 0 & doorUp.state = open : inside;
+          b3.state = outDown & capacity > 0 & doorDown.state = open : inside;
+
+          b3.state = inside & doorUp.state = open & doorUp.lastOpened = FALSE : outUp;
+          b3.state = inside & doorDown.state = open & doorDown.lastOpened = FALSE : outDown;
+
+          TRUE : b3.state;
+        esac;
+
+  TRANS !(next(doorUp.state) = open & next(doorDown.state) = open)
+
+  -- If there is a door open, then there must either be a ship waiting infront of it, or there must be a boat inside the lock
+  TRANS doorUp.state = open -> (b1.state = outUp | b2.state = outUp | b3.state = outUp | capacity < 2)
+  TRANS doorDown.state = open -> (b1.state = outDown | b2.state = outDown | b3.state = outDown | capacity < 2)
+
+  -- Capacity may not be exceeded
+  TRANS next(capacity) >= 0;
