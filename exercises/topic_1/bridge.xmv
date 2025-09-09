@@ -1,0 +1,55 @@
+MODULE Vehicle
+  VAR
+    state : {wait, move, none};
+
+
+MODULE main
+  VAR
+    bridge : {open, closing, closed, opening, opensoon};
+    boat : Vehicle();
+    car : Vehicle();
+    state : {wait, move, none};
+
+  ASSIGN
+    init(bridge) := closed;
+    init(boat.state) := none;
+    init(car.state) := none;
+
+    next(boat.state) :=
+      case
+          boat.state = none : none;
+          boat.state = none : wait;
+          boat.state = wait & bridge = open : move;
+          boat.state = wait : wait;
+          boat.state = move : move;
+          boat.state = move : none;
+        esac;
+
+    next(car.state) :=
+      case
+          car.state = none : none;
+          car.state = none : wait;
+          car.state = wait & bridge = closed : move;
+          car.state = wait : wait;
+          car.state = move : move;
+          car.state = move : none;
+        esac;
+
+    next(bridge) :=
+      case
+          bridge = closed & boat.state = wait : opensoon;
+          bridge = opensoon & (car.state = none | car.state = wait) : opening;
+          bridge = opensoon : opensoon;
+          bridge = opening : open;
+          bridge = opening : opening;
+          bridge = open & (boat.state = none | boat.state = wait) : closing;
+          bridge = open : open;
+          bridge = closing : closing;
+          bridge = closing : closed;
+          bridge = closed : closed;
+        esac;
+
+  -- Verify using simulation that indeed the bridge cannot close or open while traffic is still moving.
+
+  LTLSPEC G bridge = closing -> boat.state != move
+  LTLSPEC G bridge = opening -> car.state != move
