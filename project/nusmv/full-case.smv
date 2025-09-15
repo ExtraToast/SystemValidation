@@ -1,0 +1,5 @@
+#include "full-env.smv"
+#include "full-int.smv"
+#include "main.smv"
+#include "properties.smv"
+

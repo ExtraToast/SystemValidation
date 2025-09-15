@@ -1,0 +1,112 @@
+MODULE Interlocking(
+        T1A_occupied,T2A_occupied,T3A_occupied,T4A_occupied,
+        T1B_occupied,T2B_occupied,T3B_occupied,T4B_occupied,
+        S1A_red,S1A_green,S1B_red,S1B_green,
+        P1A_locked_straight,P1A_locked_curved,
+        P1B_locked_straight,P1B_locked_curved,
+        P2A_locked_straight,P2A_locked_curved,
+        P2B_locked_straight,P2B_locked_curved
+    )
+  DEFINE
+    S2A_green := !S2A_red;
+    S3A_green := !S3A_red;
+    S4A_green := !S4A_red;
+    S2B_green := !S2B_red;
+    S3B_green := !S3B_red;
+    S4B_green := !S4B_red;
+  VAR
+    S2A_red   : boolean;
+    S3A_red   : boolean;
+    S4A_red   : boolean;
+    S2B_red   : boolean;
+    S3B_red   : boolean;
+    S4B_red   : boolean;
+    P1A_goal_straight : boolean;
+    P2A_goal_straight : boolean;
+    P1B_goal_straight : boolean;
+    P2B_goal_straight : boolean;
+    P1A_goal_curved : boolean;
+    P2A_goal_curved : boolean;
+    P1B_goal_curved : boolean;
+    P2B_goal_curved : boolean;
+  ASSIGN
+    init(S2A_red) := TRUE;
+    init(S3A_red) := TRUE;
+    init(S4A_red) := TRUE;
+    init(S2B_red) := TRUE;
+    init(S3B_red) := TRUE;
+    init(S4B_red) := TRUE;
+    init(P1A_goal_straight) := FALSE;
+    init(P2A_goal_straight) := FALSE;
+    init(P1B_goal_straight) := FALSE;
+    init(P2B_goal_straight) := FALSE;
+    init(P1A_goal_curved) := FALSE;
+    init(P2A_goal_curved) := FALSE;
+    init(P1B_goal_curved) := FALSE;
+    init(P2B_goal_curved) := FALSE;
+    
+    next(S2A_red) := case
+        P1A_locked_straight & !T2A_occupied & !T3A_occupied : FALSE;
+        TRUE : TRUE;
+    esac;
+    next(S3A_red) := case
+        P1A_locked_straight & !T2A_occupied & !T1A_occupied : FALSE;
+        TRUE : TRUE;
+    esac;
+    next(S4A_red) := case
+        P2A_locked_curved & !T4A_occupied & ! T2B_occupied & ! T1B_occupied : FALSE;
+        TRUE : TRUE;
+    esac;
+    next(S2B_red) := case
+        P1B_locked_straight & !T2B_occupied & !T3B_occupied : FALSE;
+        TRUE : TRUE;
+    esac;
+    next(S3B_red) := case
+        P1B_locked_straight & !T2B_occupied & !T1B_occupied : FALSE;
+        TRUE : TRUE;
+    esac;
+    next(S4B_red) := case
+        P2B_locked_curved & !T4B_occupied & ! T2A_occupied & ! T1A_occupied : FALSE;
+        TRUE : TRUE;
+    esac;
+
+    next(P1A_goal_straight) := case
+      P1A_locked_straight : FALSE;
+      T1A_occupied : TRUE;
+      TRUE : P1A_goal_straight;
+    esac;
+    next(P2A_goal_straight) := case
+      P2A_locked_straight : FALSE;
+      T1B_occupied : TRUE;
+      TRUE : P2A_goal_straight;
+    esac;
+    next(P1B_goal_straight) := case
+      P1B_locked_straight : FALSE;
+      T1B_occupied : TRUE;
+      TRUE : P1B_goal_straight;
+    esac;
+    next(P2B_goal_straight) := case
+      P2B_locked_straight : FALSE;
+      T1A_occupied : TRUE;
+      TRUE : P2B_goal_straight;
+    esac;
+    next(P1A_goal_curved) := case
+      P1A_locked_curved : FALSE;
+      T3B_occupied : TRUE;
+      TRUE : P1A_goal_curved;
+    esac;
+    next(P2A_goal_curved) := case
+      P2A_locked_curved : FALSE;
+      T3A_occupied : TRUE;
+      TRUE : P2A_goal_curved;
+    esac;
+    next(P1B_goal_curved) := case
+      P1B_locked_curved : FALSE;
+      T3A_occupied : TRUE;
+      TRUE : P1B_goal_curved;
+    esac;
+    next(P2B_goal_curved) := case
+      P2B_locked_curved : FALSE;
+      T3B_occupied : TRUE;
+      TRUE : P2B_goal_curved;
+    esac;

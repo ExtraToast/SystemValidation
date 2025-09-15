@@ -1,0 +1,5 @@
+#include "trivial-env.smv"
+#include "trivial-int.smv"
+#include "main.smv"
+#include "properties.smv"
+

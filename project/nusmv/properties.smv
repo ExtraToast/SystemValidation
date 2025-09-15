@@ -1,0 +1,9 @@
+
+
+-- For each of the tracks T3A and T3B there is at least one test case
+-- in which the track is occupied at least once.
+
+CTLSPEC EF T3A_occupied
+CTLSPEC EF T3B_occupied
+
+

@@ -1,0 +1,31 @@
+MODULE Interlocking(
+        T1A_occupied,T2A_occupied,T3A_occupied,T4A_occupied,
+        T1B_occupied,T2B_occupied,T3B_occupied,T4B_occupied,
+        S1A_red,S1A_green,S1B_red,S1B_green,
+        P1A_locked_straight,P1A_locked_curved,
+        P1B_locked_straight,P1B_locked_curved,
+        P2A_locked_straight,P2A_locked_curved,
+        P2B_locked_straight,P2B_locked_curved
+    )
+  DEFINE
+    S2A_red   := TRUE;
+    S3A_red   := TRUE;
+    S4A_red   := TRUE;
+    S2B_red   := TRUE;
+    S3B_red   := TRUE;
+    S4B_red   := TRUE;
+    S2A_green := FALSE;
+    S3A_green := FALSE;
+    S4A_green := FALSE;
+    S2B_green := FALSE;
+    S3B_green := FALSE;
+    S4B_green := FALSE;
+    P1A_goal_straight := TRUE;
+    P2A_goal_straight := TRUE;
+    P1B_goal_straight := TRUE;
+    P2B_goal_straight := TRUE;
+    P1A_goal_curved := FALSE;
+    P2A_goal_curved := FALSE;
+    P1B_goal_curved := FALSE;
+    P2B_goal_curved := FALSE;
+

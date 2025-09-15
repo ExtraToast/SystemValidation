@@ -1,0 +1,34 @@
+MODULE Environment(
+        S2A_red,S3A_red,S4A_red,
+        S2B_red,S3B_red,S4B_red,
+        S2A_green,S3A_green,S4A_green,
+        S2B_green,S3B_green,S4B_green,
+        P1A_goal_straight,P1A_goal_curved,
+        P1B_goal_straight,P1B_goal_curved,
+        P2A_goal_straight,P2A_goal_curved,
+        P2B_goal_straight,P2B_goal_curved    
+    )
+    
+    
+  DEFINE
+    T1A_occupied := FALSE;
+    T2A_occupied := FALSE;
+    T3A_occupied := FALSE;
+    T4A_occupied := FALSE;
+    T1B_occupied := FALSE;
+    T2B_occupied := FALSE;
+    T3B_occupied := FALSE;
+    T4B_occupied := FALSE;
+    S1A_red   := TRUE;
+    S1B_red   := TRUE;
+    S1A_green := FALSE;
+    S1B_green := FALSE;
+    P1A_locked_straight := TRUE;
+    P2A_locked_straight := TRUE;
+    P1B_locked_straight := TRUE;
+    P2B_locked_straight := TRUE;
+    P1A_locked_curved := FALSE;
+    P2A_locked_curved := FALSE;
+    P1B_locked_curved := FALSE;
+    P2B_locked_curved := FALSE;
+
