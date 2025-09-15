@@ -1,0 +1,60 @@
+MODULE main
+  VAR
+    state : {s0, s1, s2, s3};
+
+  DEFINE
+    p :=
+      case
+          state = s0 : TRUE;
+          state = s1 : FALSE;
+          state = s2 : FALSE;
+          state = s3 : TRUE;
+        esac;
+    q :=
+      case
+          state = s0 : TRUE;
+          state = s1 : TRUE;
+          state = s2 : FALSE;
+          state = s3 : FALSE;
+        esac;
+    r :=
+      case
+          state = s0 : FALSE;
+          state = s1 : TRUE;
+          state = s2 : TRUE;
+          state = s3 : FALSE;
+        esac;
+    t :=
+      case
+          state = s0 : FALSE;
+          state = s1 : FALSE;
+          state = s2 : FALSE;
+          state = s3 : TRUE;
+        esac;
+
+  ASSIGN
+    next(state) :=
+      case
+          state = s0 : {s1, s2};
+
+          state = s1 : s0;
+
+          state = s2 : {s2, s3};
+
+          state = s3 : {s0, s1};
+      esac;
+
+  SPEC state = s0 -> AF q
+  SPEC state = s1 -> AF q
+
+  SPEC state = s0 -> AG EF (p | r)
+  SPEC state = s1 -> AG EF (p | r)
+
+  SPEC state = s0 -> EX EX r
+  SPEC state = s1 -> EX EX r
+
+  SPEC state = s0 -> EX AX r
+  SPEC state = s1 -> EX AX r
+
+  SPEC state = s0 -> AG AF q
+  SPEC state = s1 -> AG AF q

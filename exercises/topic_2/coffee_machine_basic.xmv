@@ -1,0 +1,37 @@
+-- Model the vending machine in NuSMV.
+-- Upon startup, the vending machine should be ready to accept coins.
+-- After inserting two coins it should produce coffee and be ready again to accept coins.
+-- Think about what variables you need, and how the state transitions should be defined.
+
+MODULE main
+  VAR
+    coinCounter : 0..2;
+    state : {dispensing, accepting};
+
+  ASSIGN
+    init(coinCounter) := 0;
+    next(coinCounter) :=
+      case
+          state = accepting & coinCounter < 2 : coinCounter + 1;
+          state = accepting & coinCounter = 2 : 2;
+          state = dispensing : 0;
+        esac;
+
+    init(state) := accepting;
+    next(state) :=
+      case
+          next(coinCounter) < 2 : accepting;
+          next(coinCounter) = 2 : dispensing;
+        esac;
+
+  -- always after inserting a coin, eventually coffee should be produced.
+  LTLSPEC G (state = accepting -> F (state = dispensing))
+
+  -- coffee is never produced if there are not enough coins inserted.
+  LTLSPEC G !(coinCounter < 2 & state = dispensing)
+
+  -- the vending machine accepts coins infinitely often.
+  LTLSPEC F state = accepting
+
+  SPEC EF state = dispensing
+  SPEC EF coinCounter = 2

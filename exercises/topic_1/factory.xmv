@@ -1,0 +1,37 @@
+MODULE Worker
+  VAR
+    steps : 0..10;
+    state : {signaling, working, home};
+    quotum : 0..10;
+  ASSIGN
+    init(steps) := {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    init(state) := signaling;
+    init(quotum) := {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    next(quotum) :=
+      case
+        state = signaling : quotum - 1;
+        TRUE : quotum;
+      esac;
+
+    next(state) :=
+      case
+        quotum = 0 : home;
+        state = signaling : working;
+        state = home : home;
+        state = working & steps > 1 : working;
+        state = working & steps = 1 : signaling;
+      esac;
+
+    next(steps) :=
+      case
+          state = home : 0;
+          steps > 0 : steps - 1;
+          steps = 0 & state = signaling : steps;
+          steps = 0 & state = working : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} ;
+      esac;
+
+MODULE main
+  VAR
+    worker1 : Worker();
+    worker2 : Worker();
+    worker3 : Worker();

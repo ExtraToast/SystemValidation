@@ -1,0 +1,47 @@
+MODULE main
+  VAR
+    state : {s1, s2, s3, s4};
+
+  DEFINE
+    a :=
+      case
+          state = s1 : FALSE;
+          state = s2 : FALSE;
+          state = s3 : TRUE;
+          state = s4 : TRUE;
+        esac;
+    b :=
+      case
+          state = s1 : FALSE;
+          state = s2 : TRUE;
+          state = s3 : FALSE;
+          state = s4 : TRUE;
+        esac;
+
+  ASSIGN
+    init(state) := s3;
+    next(state) :=
+      case
+          state = s1 : s2;
+
+          state = s2 : s2;
+
+          state = s3 : {s1, s2, s4};
+
+          state = s4 : s3;
+        esac;
+
+  LTLSPEC G a;
+  SPEC EG a;
+
+  LTLSPEC a U b;
+  SPEC E [ a U b ];
+
+  LTLSPEC a U X (a & !b)
+  SPEC E [a U (EX (a & !b))];
+
+  LTLSPEC X !b & G (!a | !b)
+  SPEC EX !b & EG (!a | !b)
+
+  LTLSPEC X (a & b) & F(!a & !b)
+  SPEC EF (a & b) & EF(!a & !b)

@@ -1,0 +1,55 @@
+MODULE main
+VAR
+
+  M : 4 .. 4;
+  N : 13 .. 13;
+  black : 0 .. 2 * (M + N + 1);
+  white : 0 .. 2 * (M + N + 1);
+
+  bean1 : {B, W};
+  bean2 : {B, W};
+
+
+ASSIGN
+  init(black) := M;
+  init(white) := N;
+
+
+  next(bean1) := case
+                   black + white = 1 : {B, W};
+                   black = 0 : W;
+                   white = 0 : B;
+                   TRUE : {B, W};
+                 esac;
+  next(bean2) := case
+                   black + white = 1 : {B, W};
+                   black = 0 : W;
+                   white = 0 : B;
+                   black = 1 & next(bean1) = B : W;
+                   white = 1 & next(bean1) = W : B;
+                   TRUE : {B, W};
+                 esac;
+
+  next(black) := case
+                   black + white > 1 & black + white <= 2 * (M + N):
+                       case bean1 = B & bean2 = B : black - 1 > 0 ? black - 1 : 0;
+                            bean1 = W & bean2 = W : black + 1;
+                            TRUE : black - 1 > 0 ? black - 1 : 0;
+                       esac;
+                   TRUE : black;
+                 esac;
+
+  next(white) := case
+                   black + white > 1 & black + white <= 2 * (M + N):
+                       case bean1 = W & bean2 = W : white - 2 > 0 ? white - 2 : 0;
+                            TRUE : white;
+                       esac;
+                   TRUE : white;
+                 esac;
+
+FAIRNESS bean1 = W | bean2 = W;
+
+LTLSPEC G F (black + white = 1);
+
+-- On every path there exists a path where eventually black wins
+SPEC EF (white = 0 & black > 0)
