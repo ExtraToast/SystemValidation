@@ -1,5 +1,3 @@
-
-
 -- For each of the tracks T3A and T3B there is at least one test case
 -- in which the track is occupied at least once.
 
@@ -7,3 +5,33 @@ CTLSPEC EF T3A_occupied
 CTLSPEC EF T3B_occupied
 
 
+-- For each property, provide a classification of the property as safety, liveness, or other.
+-- The set of properties that you should specify is as follows:
+
+-- The signals show either green or red.
+SPEC AG(
+(S1A_red xor S1A_green) &
+(S2A_red xor S2A_green) &
+(S3A_red xor S3A_green) &
+(S4A_red xor S4A_green) &
+(S1B_red xor S1B_green) &
+(S2B_red xor S2B_green) &
+(S3B_red xor S3B_green) &
+(S4B_red xor S4B_green)
+)
+
+-- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
+
+
+-- When a train waits in front of a signal, the signal is not stuck on red forever.
+
+
+-- The system never issues conflicting commands.
+
+
+-- The points always follow the given commands.
+
+
+-- Trains always make progress.
+
+--
