@@ -3,4 +3,4 @@ services:
     build:
       dockerfile: Dockerfile
     volumes:
-      - './exercises:/exercises'
+      - './project/nusmv:/usr/src'
