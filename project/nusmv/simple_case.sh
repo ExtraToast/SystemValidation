@@ -14,7 +14,7 @@ fi
 
 # Execute the NuSMV command
 echo "Running NuSMV..."
-NuSMV -pre cpp -dcx -ctt simple-case.smv
+NuSMV -pre cpp -ctt simple-case.smv
 
 # Check the exit status of the NuSMV command
 if [ $? -eq 0 ]; then

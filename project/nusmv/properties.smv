@@ -21,37 +21,64 @@ SPEC AG(
 )
 
 -- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
-SPEC AG (
-(
--- S2A_red condition
-T1A_occupied -> S2A_red
-) &
-(
--- S2B_red condition
-T1B_occupied -> S2B_red
-) &
-(
--- S1A_red if passing the signal is unsafe due to occupied tracks or unlocked points.
-!(
-T1A_unoccupied & T2A_unoccopied & ((P1A_locked_straight & P2B_locked_straight) | (P1A_locked_curved & P2B_locked_curved))
+SPEC AG(
+  (
+    T2A_occupied | (P1A_locked_straight & !P2B_locked_straight) | (!P1A_locked_straight & P2B_locked_straight) | (P1A_locked_curved & !P2B_locked_curved) | (!P1A_locked_curved & P2B_locked_curved)
+  ) -> S2A_red
 )
--> S1A_red
+
+SPEC AG(
+  (
+    T2B_occupied | (P1B_locked_straight & !P2A_locked_straight) | (!P1B_locked_straight & P2A_locked_straight) | (P1B_locked_curved & !P2A_locked_curved) | (!P1B_locked_curved & P2A_locked_curved)
+  ) -> S2B_red
 )
-);
 
-P1A_unoccupied = ()
+-- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
+SPEC AG(
+  (
+    T2A_occupied | (P1A_locked_straight & !P2B_locked_straight) | (!P1A_locked_straight & P2B_locked_straight) | (P1A_locked_curved & !P2B_locked_curved) | (!P1A_locked_curved & P2B_locked_curved)
+  ) -> S3A_red
+)
 
+SPEC AG(
+  (
+    T2B_occupied | (P1B_locked_straight & !P2A_locked_straight) | (!P1B_locked_straight & P2A_locked_straight) | (P1B_locked_curved & !P2A_locked_curved) | (!P1B_locked_curved & P2A_locked_curved)
+  ) -> S3B_red
+)
 
+-- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
+SPEC AG(
+  (
+    T4A_occupied | (P2A_locked_straight & !P1B_locked_straight) | (!P2A_locked_straight & P1B_locked_straight) | (P2A_locked_curved & !P1B_locked_curved) | (!P2A_locked_curved & P1B_locked_curved)
+  ) -> S4A_red
+)
+
+SPEC AG(
+  (
+    T4B_occupied | (P2B_locked_straight & !P1A_locked_straight) | (!P2B_locked_straight & P1A_locked_straight) | (P2B_locked_curved & !P1A_locked_curved) | (!P2B_locked_curved & P1A_locked_curved)
+  ) -> S4B_red
+)
 
 -- When a train waits in front of a signal, the signal is not stuck on red forever.
+SPEC AG(T1A_occupied -> AF(!S1A_red))
+SPEC AG(T1A_occupied -> AF(!S2A_red))
 
+SPEC AG(T3A_occupied -> AF(!S3A_red))
+SPEC AG(T3A_occupied -> AF(!S4A_red))
+
+SPEC AG(T1B_occupied -> AF(!S1B_red))
+SPEC AG(T1B_occupied -> AF(!S2B_red))
+
+-- Along all paths if T3B_occupied then on all paths eventually s4b is not red
+SPEC AG(T3B_occupied -> AF(!S4B_red))
+SPEC AG(T3B_occupied -> AF(!S3B_red))
 
 -- The system never issues conflicting commands.
-
+SPEC AG !(P1A_goal_straight & P1A_goal_curved)
+SPEC AG !(P2A_goal_straight & P2A_goal_curved)
+SPEC AG !(P1B_goal_straight & P1B_goal_curved)
+SPEC AG !(P2B_goal_straight & P2B_goal_curved)
 
 -- The points always follow the given commands.
 
-
 -- Trains always make progress.
-
---
