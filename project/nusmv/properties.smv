@@ -21,6 +21,26 @@ SPEC AG(
 )
 
 -- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
+SPEC AG (
+(
+-- S2A_red condition
+T1A_occupied -> S2A_red
+) &
+(
+-- S2B_red condition
+T1B_occupied -> S2B_red
+) &
+(
+-- S1A_red if passing the signal is unsafe due to occupied tracks or unlocked points.
+!(
+T1A_unoccupied & T2A_unoccopied & ((P1A_locked_straight & P2B_locked_straight) | (P1A_locked_curved & P2B_locked_curved))
+)
+-> S1A_red
+)
+);
+
+P1A_unoccupied = ()
+
 
 
 -- When a train waits in front of a signal, the signal is not stuck on red forever.
