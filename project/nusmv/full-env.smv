@@ -108,11 +108,6 @@ MODULE Environment(
     may_approach_A := !(!train1.in_bound & train1.location = T1A) & !(!train2.in_bound & train2.location = T1A);
     may_approach_B := !(!train1.in_bound & train1.location = T1B) & !(!train2.in_bound & train2.location = T1B);
 
---  FAIRNESS may_approach_A
---  FAIRNESS may_approach_B
---  FAIRNESS train1.in_bound
---  FAIRNESS train2.in_bound
-
   VAR
     P1A : Points(P1A_goal_straight,P1A_goal_curved);
     P1B : Points(P1B_goal_straight,P1B_goal_curved);
