@@ -4,12 +4,16 @@ MODULE Points(goal_straight,goal_curved)
   ASSIGN
     init(status):=moving;
     next(status):=case
-        goal_straight & status=curved   : moving;
-        goal_straight                   : straight;
-        goal_curved & status=straight   : moving;
-        goal_curved                     : curved;        
+        goal_straight & status=curved   : { status, moving };
+        goal_straight                   : { status, straight };
+        goal_curved & status=straight   : { status, moving };
+        goal_curved                     : { status, curved };
         TRUE                            : status;
     esac;
+
+  FAIRNESS status != curved
+  FAIRNESS status != straight
+  FAIRNESS status != moving
 
 MODULE Train (
         may_approach_A, may_approach_B,
@@ -41,44 +45,33 @@ MODULE Train (
       location=T00 & !may_approach_A &  may_approach_B : { T00 , T0B };
       location=T00 & !may_approach_A & !may_approach_B : T00;
       
-      location=T0A & in_bound  : { T0A, T1A };
-      location=T0A & !in_bound : { T0A, T00 };
-
-      location=T0B & in_bound  : { T0B, T1B };
-      location=T0B & !in_bound : { T0B, T00 };
-
-      location=T1A & in_bound  & S2A_green : { location, T2A };
-      location=T1A & !in_bound & S1A_green : { location, T0A };
-      location=T1B & in_bound  & S2B_green : { location, T2B };
-      location=T1B & !in_bound & S1B_green : { location, T0B };
+      location=T0A & in_bound  : T1A;
+      location=T0A & !in_bound : T00;
+      location=T0B & in_bound  : T1B;
+      location=T0B & !in_bound : T00;
       
-      location=T2A & in_bound & P1A_locked_straight : { location, T3A } ;
-      location=T2A & in_bound & P1A_locked_curved : { location, T4B } ;
-      location=T2A & !in_bound : { location, T1A };
-      location=T2B & in_bound & P1B_locked_straight : { location, T3B };
-      location=T2B & in_bound & P1B_locked_curved : { location, T4A };
-      location=T2B & !in_bound : { location, T1B };
-
-      location=T4A & in_bound : { location, T3A };
-      location=T4A & !in_bound & P2A_locked_curved : { location, T2B };
-      location=T4B & in_bound : { location, T3B };
-      location=T4B & !in_bound & P2B_locked_curved : { location, T2A };
+      location=T1A & in_bound  & S2A_green : T2A;
+      location=T1A & !in_bound & S1A_green : T0A;
+      location=T1B & in_bound  & S2B_green : T2B;
+      location=T1B & !in_bound & S1B_green : T0B;
       
-      location=T3A & !in_bound & S4A_green : { location, T4A };
-      location=T3B & !in_bound & S4B_green : { location, T4B };
+      location=T2A & in_bound & P1A_locked_straight : T3A ;
+      location=T2A & in_bound & P1A_locked_curved : T4B ;
+      location=T2A & !in_bound : T1A;
+      location=T2B & in_bound & P1B_locked_straight : T3B ;
+      location=T2B & in_bound & P1B_locked_curved : T4A ;
+      location=T2B & !in_bound : T1B;
+
+      location=T4A & in_bound : T3A ;
+      location=T4A & !in_bound & P2A_locked_curved : T2B ;
+      location=T4B & in_bound : T3B ;
+      location=T4B & !in_bound & P2B_locked_curved : T2A ;
+      
+      location=T3A & !in_bound & S4A_green : T4A;
+      location=T3B & !in_bound & S4B_green : T4B;
 
       TRUE:location;
     esac;
-
-  FAIRNESS location != T1A
-  FAIRNESS location != T1B
-  FAIRNESS location != T2A
-  FAIRNESS location != T2B
-  FAIRNESS location != T3A
-  FAIRNESS location != T3B
-  FAIRNESS location != T4A
-  FAIRNESS location != T4B
-
 
 MODULE Environment(
         S2A_red,S3A_red,S4A_red,
