@@ -7,14 +7,14 @@ cd /usr/src || {
 }
 
 # Check if the .smv file exists
-if [ ! -f "error-case.smv" ]; then
-  echo "Error: File 'error-case.smv' not found in /usr/src"
+if [ ! -f "delay-case.smv" ]; then
+  echo "Error: File 'delay-case.smv' not found in /usr/src"
   exit 1
 fi
 
 # Execute the NuSMV command
 echo "Running NuSMV..."
-NuSMV -pre cpp -ctt error-case.smv
+NuSMV -pre cpp -ctt delay-case.smv
 
 # Check the exit status of the NuSMV command
 if [ $? -eq 0 ]; then
