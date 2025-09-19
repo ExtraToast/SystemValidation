@@ -99,10 +99,7 @@ SPEC AG(T4B_occupied -> AF(!T4B_occupied))
 SPEC AG EF T3A_occupied
 
 -- There is a trace in which trains pass each other in the middle.
-SPEC EF (
-( T1A_occupied -> AX ( !T1A_occupied & !T2A_occupied ) ) &
-( T1B_occupied -> AX ( !T1B_occupied & !T2B_occupied ) )
-)
+SPEC EF ( T3A_occupied & T3B_occupied )
 
 -- Trains never drive over an unlocked point
 -- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
@@ -120,7 +117,6 @@ SPEC AG (
   ((T4A_occupied & S4A_green) -> (P2A_locked_curved | P2A_locked_straight)) &
   ((T4B_occupied & S4B_green) -> (P2B_locked_curved | P2B_locked_straight))
 )
-
 
 -- There is a trace where the trains never switch tracks
 SPEC EG ( !P1A_locked_curved & !P1B_locked_curved & !P2A_locked_curved & !P2B_locked_curved )
