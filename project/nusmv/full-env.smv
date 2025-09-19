@@ -105,8 +105,13 @@ MODULE Environment(
     P2A_locked_curved := P2A.status=curved;
     P1B_locked_curved := P1B.status=curved;
     P2B_locked_curved := P2B.status=curved;
-    may_approach_A := TRUE;
-    may_approach_B := TRUE;
+    may_approach_A := !(!train1.in_bound & train1.location = T1A) & !(!train2.in_bound & train2.location = T1A);
+    may_approach_B := !(!train1.in_bound & train1.location = T1B) & !(!train2.in_bound & train2.location = T1B);
+
+--  FAIRNESS may_approach_A
+--  FAIRNESS may_approach_B
+--  FAIRNESS train1.in_bound
+--  FAIRNESS train2.in_bound
 
   VAR
     P1A : Points(P1A_goal_straight,P1A_goal_curved);
@@ -137,5 +142,3 @@ MODULE Environment(
       P2A_locked_straight,P2A_locked_curved,
       P2B_locked_straight,P2B_locked_curved
     );
-
-
