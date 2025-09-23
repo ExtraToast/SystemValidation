@@ -48,23 +48,29 @@ MODULE Train (
       
       location=T1A & in_bound  & S2A_green : T2A;
       location=T1A & !in_bound & S1A_green : T0A;
+
       location=T1B & in_bound  & S2B_green : T2B;
       location=T1B & !in_bound & S1B_green : T0B;
       
       location=T2A & in_bound & P1A_locked_straight : T3A ;
       location=T2A & in_bound & P1A_locked_curved : T4B ;
       location=T2A & !in_bound : T1A;
+
       location=T2B & in_bound & P1B_locked_straight : T3B ;
       location=T2B & in_bound & P1B_locked_curved : T4A ;
       location=T2B & !in_bound : T1B;
 
       location=T4A & in_bound : T3A ;
       location=T4A & !in_bound & P2A_locked_curved : T2B ;
+
       location=T4B & in_bound : T3B ;
       location=T4B & !in_bound & P2B_locked_curved : T2A ;
       
       location=T3A & !in_bound & S4A_green : T4A;
+      location=T3A & in_bound & S3A_green : T2A;
+
       location=T3B & !in_bound & S4B_green : T4B;
+      location=T3B & in_bound & S3B_green : T2B;
 
       TRUE:location;
     esac;

@@ -27,7 +27,7 @@ variables = [
     "P2B_locked_straight",
     "P2B_locked_curved",
 
-    "T1A_occupied"
+    "T1A_occupied",
     "T2A_occupied",
     "T3A_occupied",
     "T4A_occupied",
@@ -38,22 +38,14 @@ variables = [
     "T4B_occupied",
 
     "S1A_red",
-    "S1A_green",
     "S2A_red",
-    "S2A_green",
     "S3A_red",
-    "S3A_green",
     "S4A_red",
-    "S4A_green",
 
     "S1B_red",
-    "S1B_green",
     "S2B_red",
-    "S2B_green",
     "S3B_red",
-    "S3B_green",
     "S4B_red",
-    "S4B_green",
 ]
 
 # Extract state blocks

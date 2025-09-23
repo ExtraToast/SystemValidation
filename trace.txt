@@ -1,3 +1,24 @@
+  -> State: 1.1 <-
+    environment.P1A.status = moving
+    environment.P1B.status = moving
+    environment.P2A.status = moving
+    environment.P2B.status = moving
+    environment.train1.location = T00
+    environment.train1.in_bound = TRUE
+    environment.train2.location = T00
+    environment.train2.in_bound = TRUE
+    interlocking.S2A_red = TRUE
+    interlocking.S3A_red = TRUE
+    interlocking.S4A_red = TRUE
+    interlocking.S2B_red = TRUE
+    interlocking.S3B_red = TRUE
+    interlocking.S4B_red = TRUE
+    interlocking.P1A_goal_straight = FALSE
+    interlocking.P2A_goal_straight = FALSE
+    interlocking.P1B_goal_straight = FALSE
+    interlocking.P2B_goal_straight = FALSE
+    interlocking.P1A_goal_curved = FALSE
+    interlocking.P2A_goal_curved = FALSE
     interlocking.P1B_goal_curved = FALSE
     interlocking.P2B_goal_curved = FALSE
     P2B_goal_curved = FALSE
