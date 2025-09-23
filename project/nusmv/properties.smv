@@ -103,7 +103,6 @@ SPEC EF ( T3A_occupied & T3B_occupied )
 
 -- Trains never drive over an unlocked point
 -- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
-
 SPEC AG (
   ((T1A_occupied & S2A_green) -> (P1A_locked_curved | P1A_locked_straight)) &
   ((T1B_occupied & S2B_green) -> (P1B_locked_curved | P1B_locked_straight)) &
