@@ -109,23 +109,23 @@
 --)
 
 -- Seperate specs for debugging
---SPEC AG(P1A_goal_straight -> A[P1A_locked_curved U A[!P1A_locked_curved U P1A_locked_straight]])
---SPEC AG(P1A_goal_curved -> A[P1A_locked_straight U A[!P1A_locked_straight U P1A_locked_curved]])
---
---SPEC AG(P1B_goal_straight -> A[P1B_locked_curved U A[!P1B_locked_curved U P1B_locked_straight]])
---SPEC AG(P1B_goal_curved -> A[P1B_locked_straight U A[!P1B_locked_straight U P1B_locked_curved]])
---
---SPEC AG(P2A_goal_straight -> A[P2A_locked_curved U A[!P2A_locked_curved U P2A_locked_straight]])
---SPEC AG(P2A_goal_curved -> A[P2A_locked_straight U A[!P2A_locked_straight U P2A_locked_curved]])
---
---SPEC AG(P2B_goal_straight -> A[P2B_locked_curved U A[!P2B_locked_curved U P2B_locked_straight]])
---SPEC AG(P2B_goal_curved -> A[P2B_locked_straight U A[!P2B_locked_straight U P2B_locked_curved]])
+SPEC AG(P1A_goal_straight -> A[P1A_locked_curved U A[!P1A_locked_curved U P1A_locked_straight]])
+SPEC AG(P1A_goal_curved -> A[P1A_locked_straight U A[!P1A_locked_straight U P1A_locked_curved]])
+
+SPEC AG(P1B_goal_straight -> A[P1B_locked_curved U A[!P1B_locked_curved U P1B_locked_straight]])
+SPEC AG(P1B_goal_curved -> A[P1B_locked_straight U A[!P1B_locked_straight U P1B_locked_curved]])
+
+SPEC AG(P2A_goal_straight -> A[P2A_locked_curved U A[!P2A_locked_curved U P2A_locked_straight]])
+SPEC AG(P2A_goal_curved -> A[P2A_locked_straight U A[!P2A_locked_straight U P2A_locked_curved]])
+
+SPEC AG(P2B_goal_straight -> A[P2B_locked_curved U A[!P2B_locked_curved U P2B_locked_straight]])
+SPEC AG(P2B_goal_curved -> A[P2B_locked_straight U A[!P2B_locked_straight U P2B_locked_curved]])
 
 -- Trains always make progress.
 -- Along all paths it holds globally, if t1a is occupied then it holds on all paths eventually that t1a is unoccupied
 --SPEC AG(T1A_occupied -> AF(!T1A_occupied))
 --SPEC AG(T2A_occupied -> AF(!T2A_occupied))
-SPEC AG(T3A_occupied -> AF(!T3A_occupied))
+--SPEC AG(T3A_occupied -> AF(!T3A_occupied))
 --SPEC AG(T4A_occupied -> AF(!T4A_occupied))
 --SPEC AG(T1B_occupied -> AF(!T1B_occupied))
 --SPEC AG(T2B_occupied -> AF(!T2B_occupied))

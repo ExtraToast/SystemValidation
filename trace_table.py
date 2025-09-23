@@ -8,24 +8,29 @@ with open("trace.txt") as f:
 # Variables we care about
 variables = [
     "P1A_goal_curved",
-    "P1A_goal_straight",
-    "P2A_goal_curved",
-    "P2A_goal_straight",
-
-    "P1B_goal_curved",
-    "P1B_goal_straight",
     "P2B_goal_curved",
+
+    "P1A_goal_straight",
     "P2B_goal_straight",
 
-    "P1A_locked_curved",
-    "P1A_locked_straight",
-    "P2A_locked_curved",
-    "P2A_locked_straight",
 
-    "P1B_locked_curved",
-    "P1B_locked_straight",
-    "P2B_locked_straight",
+    "P2A_goal_curved",
+    "P1B_goal_curved",
+
+    "P2A_goal_straight",
+    "P1B_goal_straight",
+
+    "P1A_locked_curved",
     "P2B_locked_curved",
+
+    "P1A_locked_straight",
+    "P2B_locked_straight",
+
+    "P2A_locked_curved",
+    "P1B_locked_curved",
+
+    "P2A_locked_straight",
+    "P1B_locked_straight",
 
     "T1A_occupied",
     "T2A_occupied",
