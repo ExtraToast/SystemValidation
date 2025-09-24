@@ -8,107 +8,162 @@
 -- For each property, provide a classification of the property as safety, liveness, or other.
 -- The set of properties that you should specify is as follows:
 
--- The signals show either green or red.
---SPEC AG(
---  (S1A_red xor S1A_green) &
---  (S2A_red xor S2A_green) &
---  (S3A_red xor S3A_green) &
---  (S4A_red xor S4A_green) &
---  (S1B_red xor S1B_green) &
---  (S2B_red xor S2B_green) &
---  (S3B_red xor S3B_green) &
---  (S4B_red xor S4B_green)
---)
+ The signals show either green or red.
+SPEC AG(
+  (S1A_red xor S1A_green) &
+  (S2A_red xor S2A_green) &
+  (S3A_red xor S3A_green) &
+  (S4A_red xor S4A_green) &
+  (S1B_red xor S1B_green) &
+  (S2B_red xor S2B_green) &
+  (S3B_red xor S3B_green) &
+  (S4B_red xor S4B_green)
+)
 
 -- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
---SPEC AG(
---  ((T2A_occupied | (P1A_locked_straight & !P2B_locked_straight) | (!P1A_locked_straight & P2B_locked_straight) | (P1A_locked_curved & !P2B_locked_curved) | (!P1A_locked_curved & P2B_locked_curved)) -> S2A_red) &
---  ((T2B_occupied | (P1B_locked_straight & !P2A_locked_straight) | (!P1B_locked_straight & P2A_locked_straight) | (P1B_locked_curved & !P2A_locked_curved) | (!P1B_locked_curved & P2A_locked_curved)) -> S2B_red) &
---  ((T2A_occupied | (P1A_locked_straight & !P2B_locked_straight) | (!P1A_locked_straight & P2B_locked_straight) | (P1A_locked_curved & !P2B_locked_curved) | (!P1A_locked_curved & P2B_locked_curved)) -> S3A_red) &
---  ((T2B_occupied | (P1B_locked_straight & !P2A_locked_straight) | (!P1B_locked_straight & P2A_locked_straight) | (P1B_locked_curved & !P2A_locked_curved) | (!P1B_locked_curved & P2A_locked_curved)) -> S3B_red) &
---  ((T4A_occupied | (P2A_locked_straight & !P1B_locked_straight) | (!P2A_locked_straight & P1B_locked_straight) | (P2A_locked_curved & !P1B_locked_curved) | (!P2A_locked_curved & P1B_locked_curved)) -> S4A_red) &
---  ((T4B_occupied | (P2B_locked_straight & !P1A_locked_straight) | (!P2B_locked_straight & P1A_locked_straight) | (P2B_locked_curved & !P1A_locked_curved) | (!P2B_locked_curved & P1A_locked_curved)) -> S4B_red)
---)
+SPEC AG(
+  (
+    T2A_occupied                                          --occupied
+      | (P1A_locked_straight & P2B_locked_straight & T3A_occupied)  --locked & occupied
+      | (P1A_locked_curved & P2B_locked_curved & T3B_occupied)      --locked & occupied
+      | (P1A_locked_straight & !P2B_locked_straight)      --unlocked
+      | (!P1A_locked_straight & P2B_locked_straight)      --unlocked
+      | (P1A_locked_curved & !P2B_locked_curved)          --unlocked
+      | (!P1A_locked_curved & P2B_locked_curved)          --unlocked
+  ) -> S2A_red
+)
 
--- Seperate specs for debugging
---SPEC AG(
---  (
---    T2A_occupied | (P1A_locked_straight & !P2B_locked_straight) | (!P1A_locked_straight & P2B_locked_straight) | (P1A_locked_curved & !P2B_locked_curved) | (!P1A_locked_curved & P2B_locked_curved)
---  ) -> S2A_red
---)
---
---SPEC AG(
---  (
---    T2B_occupied | (P1B_locked_straight & !P2A_locked_straight) | (!P1B_locked_straight & P2A_locked_straight) | (P1B_locked_curved & !P2A_locked_curved) | (!P1B_locked_curved & P2A_locked_curved)
---  ) -> S2B_red
---)
---
---SPEC AG(
---  (
---    T2A_occupied | (P1A_locked_straight & !P2B_locked_straight) | (!P1A_locked_straight & P2B_locked_straight) | (P1A_locked_curved & !P2B_locked_curved) | (!P1A_locked_curved & P2B_locked_curved)
---  ) -> S3A_red
---)
---
---SPEC AG(
---  (
---    T2B_occupied | (P1B_locked_straight & !P2A_locked_straight) | (!P1B_locked_straight & P2A_locked_straight) | (P1B_locked_curved & !P2A_locked_curved) | (!P1B_locked_curved & P2A_locked_curved)
---  ) -> S3B_red
---)
---
---SPEC AG(
---  (
---    T4A_occupied | (P2A_locked_straight & !P1B_locked_straight) | (!P2A_locked_straight & P1B_locked_straight) | (P2A_locked_curved & !P1B_locked_curved) | (!P2A_locked_curved & P1B_locked_curved)
---  ) -> S4A_red
---)
---
---SPEC AG(
---  (
---    T4B_occupied | (P2B_locked_straight & !P1A_locked_straight) | (!P2B_locked_straight & P1A_locked_straight) | (P2B_locked_curved & !P1A_locked_curved) | (!P2B_locked_curved & P1A_locked_curved)
---  ) -> S4B_red
---)
+SPEC AG(
+  (
+    T2B_occupied                                      --occupied
+      | (P1B_locked_straight & P2A_locked_straight & T3B_occupied)  --locked & occupied
+      | (P1B_locked_curved & P2A_locked_curved & T3A_occupied)      --locked & occupied
+      | (P1B_locked_straight & !P2A_locked_straight)  --unlocked
+      | (!P1B_locked_straight & P2A_locked_straight)  --unlocked
+      | (P1B_locked_curved & !P2A_locked_curved)      --unlocked
+      | (!P1B_locked_curved & P2A_locked_curved)      --unlocked
+  ) -> S2B_red
+)
+
+
+SPEC AG(
+  (
+    T2A_occupied
+      | (P1A_locked_straight & !P2B_locked_straight)
+      | (!P1A_locked_straight & P2B_locked_straight)
+      | (P1A_locked_curved & !P2B_locked_curved)
+      | (!P1A_locked_curved & P2B_locked_curved)
+      | (P1A_locked_straight & P2B_locked_straight & T1A_occupied)
+  ) -> S3A_red
+)
+
+SPEC AG(
+  (
+    T2B_occupied
+      | (P1B_locked_straight & !P2A_locked_straight)
+      | (!P1B_locked_straight & P2A_locked_straight)
+      | (P1B_locked_curved & !P2A_locked_curved)
+      | (!P1B_locked_curved & P2A_locked_curved)
+      | (P1B_locked_straight & P2A_locked_straight & T1B_occupied)
+  ) -> S3B_red
+)
+
+SPEC AG(
+  (
+    T4A_occupied                                      -- Occupied
+      | (P2A_locked_curved & P1B_locked_curved & T1B_occupied) -- Locked & occupied
+      | (P2A_locked_straight & !P1B_locked_straight)  -- Unlocked
+      | (!P2A_locked_straight & P1B_locked_straight)  -- Unlocked
+      | (P2A_locked_curved & !P1B_locked_curved)      -- Unlocked
+      | (!P2A_locked_curved & P1B_locked_curved)      -- Unlocked
+  ) -> S4A_red
+)
+
+SPEC AG(
+  (
+    T4B_occupied                                    -- Occupied
+    | (P2B_locked_curved & P1A_locked_curved & T1A_occupied) -- Locked & occupied
+    | (P2B_locked_straight & !P1A_locked_straight)  -- Unlocked
+    | (!P2B_locked_straight & P1A_locked_straight)  -- Unlocked
+    | (P2B_locked_curved & !P1A_locked_curved)      -- Unlocked
+    | (!P2B_locked_curved & P1A_locked_curved)      -- Unlocked
+  ) -> S4B_red
+)
 
 -- When a train waits in front of a signal, the signal is not stuck on red forever.
---SPEC AG(
---  (T1A_occupied -> AF(!S1A_red | !S2A_red)) &
---  (T3A_occupied -> AF(!S3A_red | !S4A_red)) &
---  (T1B_occupied -> AF(!S1B_red | !S2B_red)) &
---  (T3B_occupied -> AF(!S4B_red | !S3B_red))
---)
+SPEC AG (
+  (
+    T2B_occupied & AX T3B_occupied -- If T2B is occupied, and in the next T3B_occupied
+  ) -> AF(!S4B_red) -- Then eventually S4B needs to become green
+)
 
--- Seperate specs for debugging purposes
---SPEC AG(T1A_occupied -> AF(!S1A_red | !S2A_red))
---SPEC AG(T3A_occupied -> AF(!S3A_red | !S4A_red))
---SPEC AG(T1B_occupied -> AF(!S1B_red | !S2B_red))
---SPEC AG(T3B_occupied -> AF(!S4B_red | !S3B_red))
+SPEC AG (
+  (
+    (
+      (T1A_occupied & P1A_locked_curved & P2B_locked_curved)
+      | T4B_occupied
+    ) & AX T3B_occupied -- If a train came from T1A or T4B into T3B
+  ) -> AF(!S3B_red) -- Then eventually S3B needs to become green
+)
+
+SPEC AG (
+  (
+    (
+      !T2B_occupied
+      & !(P2A_locked_curved & P1B_locked_curved & T3A_occupied)
+    ) & AX T1B_occupied -- If a train did not come from T3A or T2B and T1B is occupied it came from outside the system
+  ) -> AF(!S2B_red) -- Then eventually S2B must become green
+)
+
+SPEC AG (
+  (
+    (
+      T2B_occupied
+      | (P2A_locked_curved & P1B_locked_curved & T3A_occupied)
+    ) & AX T1B_occupied -- If a train came from T3A or T2B and T1B is occupied it came from inside the system
+  ) -> AF(!S1B_red) -- Then eventually S1B must become green
+)
+
+SPEC AG (
+  (
+    T2A_occupied & AX T3A_occupied -- If T2A is occupied, and in the next T3A_occupied
+  ) -> AF(!S4A_red) -- Then eventually S4A needs to become green
+)
+
+SPEC AG (
+  (
+    (
+      (T1B_occupied & P1B_locked_curved & P2A_locked_curved)
+      | T4A_occupied
+    ) & AX T3A_occupied -- If a train came from T1B or T4A into T3A
+  ) -> AF(!S3A_red) -- Then eventually S3A needs to become green
+)
+
+SPEC AG (
+  (
+    (
+      !T2A_occupied
+      & !(P2B_locked_curved & P1A_locked_curved & T3B_occupied)
+    ) & AX T1A_occupied -- If a train did not come from T3B or T2A and T1A is occupied it came from outside the system
+  ) -> AF(!S2A_red) -- Then eventually S2A must become green
+)
+
+SPEC AG (
+  (
+    (
+      T2A_occupied
+      | (P2B_locked_curved & P1A_locked_curved & T3B_occupied)
+    ) & AX T1A_occupied -- If a train came from T3B or T2A and T1A is occupied it came from inside the system
+  ) -> AF(!S1A_red) -- Then eventually S1A must become green
+)
 
 -- The system never issues conflicting commands.
---SPEC AG(
---  !(P1A_goal_straight & P1A_goal_curved) &
---  !(P2A_goal_straight & P2A_goal_curved) &
---  !(P1B_goal_straight & P1B_goal_curved) &
---  !(P2B_goal_straight & P2B_goal_curved)
---)
-
--- Seperate specs for debugging purposes
---SPEC AG !(P1A_goal_straight & P1A_goal_curved)
---SPEC AG !(P2A_goal_straight & P2A_goal_curved)
---SPEC AG !(P1B_goal_straight & P1B_goal_curved)
---SPEC AG !(P2B_goal_straight & P2B_goal_curved)
-
+SPEC AG !(P1A_goal_straight & P1A_goal_curved)
+SPEC AG !(P2A_goal_straight & P2A_goal_curved)
+SPEC AG !(P1B_goal_straight & P1B_goal_curved)
+SPEC AG !(P2B_goal_straight & P2B_goal_curved)
 
 -- The points always follow the given commands.
---SPEC AG(
---  (P1A_goal_straight -> A[P1A_locked_curved U A[!P1A_locked_curved U P1A_locked_straight]]) &
---  (P1A_goal_curved -> A[P1A_locked_straight U A[!P1A_locked_straight U P1A_locked_curved]]) &
---  (P1B_goal_straight -> A[P1B_locked_curved U A[!P1B_locked_curved U P1B_locked_straight]]) &
---  (P1B_goal_curved -> A[P1B_locked_straight U A[!P1B_locked_straight U P1B_locked_curved]]) &
---  (P2A_goal_straight -> A[P2A_locked_curved U A[!P2A_locked_curved U P2A_locked_straight]]) &
---  (P2A_goal_curved -> A[P2A_locked_straight U A[!P2A_locked_straight U P2A_locked_curved]]) &
---  (P2B_goal_straight -> A[P2B_locked_curved U A[!P2B_locked_curved U P2B_locked_straight]]) &
---  (P2B_goal_curved -> A[P2B_locked_straight U A[!P2B_locked_straight U P2B_locked_curved]])
---)
-
--- Seperate specs for debugging
 SPEC AG(P1A_goal_straight -> A[P1A_locked_curved U A[!P1A_locked_curved U P1A_locked_straight]])
 SPEC AG(P1A_goal_curved -> A[P1A_locked_straight U A[!P1A_locked_straight U P1A_locked_curved]])
 
@@ -123,46 +178,99 @@ SPEC AG(P2B_goal_curved -> A[P2B_locked_straight U A[!P2B_locked_straight U P2B_
 
 -- Trains always make progress.
 -- Along all paths it holds globally, if t1a is occupied then it holds on all paths eventually that t1a is unoccupied
---SPEC AG(T1A_occupied -> AF(!T1A_occupied))
---SPEC AG(T2A_occupied -> AF(!T2A_occupied))
---SPEC AG(T3A_occupied -> AF(!T3A_occupied))
---SPEC AG(T4A_occupied -> AF(!T4A_occupied))
---SPEC AG(T1B_occupied -> AF(!T1B_occupied))
---SPEC AG(T2B_occupied -> AF(!T2B_occupied))
---SPEC AG(T3B_occupied -> AF(!T3B_occupied))
---SPEC AG(T4B_occupied -> AF(!T4B_occupied))
+SPEC AG(T1A_occupied -> AF(!T1A_occupied))
+SPEC AG(T2A_occupied -> AF(!T2A_occupied))
+SPEC AG(T3A_occupied -> AF(!T3A_occupied))
+SPEC AG(T4A_occupied -> AF(!T4A_occupied))
+SPEC AG(T1B_occupied -> AF(!T1B_occupied))
+SPEC AG(T2B_occupied -> AF(!T2B_occupied))
+SPEC AG(T3B_occupied -> AF(!T3B_occupied))
+SPEC AG(T4B_occupied -> AF(!T4B_occupied))
 
 ---- It is always possible to reach a situation in which track T3A is occupied.
---SPEC AG EF T3A_occupied
---
+SPEC AG EF T3A_occupied
+
 ---- There is a trace in which trains pass each other in the middle.
---SPEC EF ( T3A_occupied & T3B_occupied )
---
----- Trains never drive over an unlocked point
----- The signals show red if passing the signal is unsafe due to occupied tracks or unlocked points.
---SPEC AG (
---  ((T1A_occupied & S2A_green) -> (P1A_locked_curved | P1A_locked_straight)) &
---  ((T1B_occupied & S2B_green) -> (P1B_locked_curved | P1B_locked_straight)) &
---
---  ((T3A_occupied & S3A_green) -> (P1A_locked_curved | P1A_locked_straight)) &
---  ((T3B_occupied & S3B_green) -> (P1B_locked_curved | P1B_locked_straight)) &
---
---  ((T3A_occupied & S4A_green) -> (P2A_locked_curved | P2A_locked_straight)) &
---  ((T3B_occupied & S4B_green) -> (P2B_locked_curved | P2B_locked_straight)) &
---
---  ((T4A_occupied & S4A_green) -> (P2A_locked_curved | P2A_locked_straight)) &
---  ((T4B_occupied & S4B_green) -> (P2B_locked_curved | P2B_locked_straight))
---)
---
+SPEC EF(T3A_occupied & T3B_occupied)
+
+-- Trains never drive over an unlocked point
+SPEC AG(
+  (
+    T1A_occupied
+    & AX(!T1A_occupied)
+    & (AX(T2A_occupied) | AX(T3B_occupied)) -- If a train drives from T1A to T2A or T3B
+  ) -> (P1A_locked_straight | P1A_locked_curved) -- Then P1A must be locked
+)
+
+SPEC AG(
+  (
+    T2A_occupied
+    & AX(!T2A_occupied)
+    & AX(T1A_occupied) -- If a train drives from T2A to T1A
+  ) -> (P1A_locked_straight | P1A_locked_curved) -- Then P1A must be locked
+)
+
+SPEC AG(
+  (
+      T3A_occupied
+      & AX(!T3A_occupied)
+      & (AX(T4A_occupied) | AX(T1B_occupied)) -- If A train drives from T3A to T1B or T4A
+  ) -> (P2A_locked_straight | P2A_locked_curved) -- Then P2A must be locked
+)
+
+SPEC AG(
+  (
+    T4A_occupied
+    & AX(!T4A_occupied)
+    & AX(T3A_occupied) -- If a train drives from T4A to T3A
+  ) -> (P2A_locked_straight | P2A_locked_curved) -- Then P2A must be locked
+)
+
+
+SPEC AG(
+  (
+    T1B_occupied
+    & AX(!T1B_occupied)
+    & (AX(T2B_occupied) | AX(T3A_occupied)) -- If a train drives from T1B to T2B or T3A
+  ) -> (P1B_locked_straight | P1B_locked_curved) -- Then P1B must be locked
+)
+
+SPEC AG(
+  (
+    T2B_occupied
+    & AX(!T2B_occupied)
+    & AX(T1B_occupied) -- If a train drives from T2B to T1B
+  ) -> (P1B_locked_straight | P1B_locked_curved) -- Then P1B must be locked
+)
+
+SPEC AG(
+  (
+      T3B_occupied
+      & AX(!T3B_occupied)
+      & (AX(T4B_occupied) | AX(T1A_occupied)) -- If A train drives from T3B to T1A or T4B
+  ) -> (P2B_locked_straight | P2B_locked_curved) -- Then P2B must be locked
+)
+
+SPEC AG(
+  (
+    T4B_occupied
+    & AX(!T4B_occupied)
+    & AX(T3B_occupied) -- If a train drives from T4B to T3B
+  ) -> (P2B_locked_straight | P2B_locked_curved) -- Then P2B must be locked
+)
+
 ---- There is a trace where the trains never switch tracks
---SPEC EG ( !P1A_locked_curved & !P1B_locked_curved & !P2A_locked_curved & !P2B_locked_curved )
---
+SPEC EG (
+    (T1A_occupied -> E[T2A_occupied U E[T3A_occupied U T4A_occupied]]) &
+    (T1B_occupied -> E[T2B_occupied U E[T3B_occupied U T4B_occupied]])
+)
+
 ---- Lights cannot be green and red simultaneaously
---SPEC AG !(S1A_green & S1A_red)
---SPEC AG !(S2A_green & S2A_red)
---SPEC AG !(S3A_green & S3A_red)
---SPEC AG !(S4A_green & S4A_red)
---SPEC AG !(S1B_green & S1B_red)
---SPEC AG !(S2B_green & S2B_red)
---SPEC AG !(S3B_green & S3B_red)
---SPEC AG !(S4B_green & S4B_red)
+SPEC AG !(S1A_green & S1A_red)
+SPEC AG !(S2A_green & S2A_red)
+SPEC AG !(S3A_green & S3A_red)
+SPEC AG !(S4A_green & S4A_red)
+SPEC AG !(S1B_green & S1B_red)
+SPEC AG !(S2B_green & S2B_red)
+SPEC AG !(S3B_green & S3B_red)
+SPEC AG !(S4B_green & S4B_red)

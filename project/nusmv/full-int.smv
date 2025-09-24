@@ -76,7 +76,7 @@ MODULE Interlocking(
 
     next(P1A_goal_straight) := case
       P1A_locked_straight : FALSE;
-      (T3B_occupied | (T1A_occupied & !T3A_occupied) | (!T1A_occupied & T3A_occupied)) & !P1A_goal_curved & !next(P1A_goal_curved) : TRUE;
+      !P1A_locked_straight & (T3B_occupied | (T1A_occupied & !T3A_occupied) | (!T1A_occupied & T3A_occupied)) & !P1A_goal_curved & !next(P1A_goal_curved) : TRUE;
       TRUE : P1A_goal_straight;
     esac;
     next(P2B_goal_straight) := case
@@ -87,7 +87,7 @@ MODULE Interlocking(
 
     next(P1A_goal_curved) := case
        P1A_locked_curved : FALSE;
-       ((T1A_occupied & !T3B_occupied) | (!T1A_occupied & T3B_occupied)) & !T2A_occupied & !P1A_goal_straight : TRUE;
+       !P1A_locked_curved & ((T1A_occupied & !T3B_occupied) | (!T1A_occupied & T3B_occupied)) & !T2A_occupied & !P1A_goal_straight : TRUE;
        TRUE : P1A_goal_curved;
     esac;
     next(P2B_goal_curved) := case
@@ -98,7 +98,7 @@ MODULE Interlocking(
 
     next(P2A_goal_straight) := case
       P2A_locked_straight : FALSE;
-      (T3A_occupied | (T1B_occupied & !T3B_occupied) | (!T1B_occupied & T3B_occupied)) & !P2A_goal_curved & !next(P1B_goal_curved): TRUE;
+      !P2A_locked_straight & (T3A_occupied | (T1B_occupied & !T3B_occupied) | (!T1B_occupied & T3B_occupied)) & !P2A_goal_curved & !next(P1B_goal_curved): TRUE;
       TRUE : P2A_goal_straight;
     esac;
     next(P1B_goal_straight) := case
@@ -109,7 +109,7 @@ MODULE Interlocking(
 
     next(P1B_goal_curved) := case
       P1B_locked_curved : FALSE;
-      ((T1B_occupied & !T3A_occupied) | (!T1B_occupied & T3A_occupied)) & !P1B_goal_straight : TRUE;
+      !P1B_locked_curved & ((T1B_occupied & !T3A_occupied) | (!T1B_occupied & T3A_occupied)) & !P1B_goal_straight : TRUE;
       TRUE : P1B_goal_curved;
     esac;
     next(P2A_goal_curved) := case
