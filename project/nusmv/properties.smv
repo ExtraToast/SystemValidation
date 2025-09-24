@@ -8,7 +8,7 @@
 -- For each property, provide a classification of the property as safety, liveness, or other.
 -- The set of properties that you should specify is as follows:
 
- The signals show either green or red.
+-- The signals show either green or red.
 SPEC AG(
   (S1A_red xor S1A_green) &
   (S2A_red xor S2A_green) &
@@ -265,12 +265,12 @@ SPEC EG (
     (T1B_occupied -> E[T2B_occupied U E[T3B_occupied U T4B_occupied]])
 )
 
----- Lights cannot be green and red simultaneaously
-SPEC AG !(S1A_green & S1A_red)
-SPEC AG !(S2A_green & S2A_red)
-SPEC AG !(S3A_green & S3A_red)
-SPEC AG !(S4A_green & S4A_red)
-SPEC AG !(S1B_green & S1B_red)
-SPEC AG !(S2B_green & S2B_red)
-SPEC AG !(S3B_green & S3B_red)
-SPEC AG !(S4B_green & S4B_red)
+-- If a train is waiting to drive over point P1A then eventually that point must become locked
+SPEC AG (
+  (
+    (
+      !T2A_occupied
+      & !(P2B_locked_curved & P1A_locked_curved & T3B_occupied)
+    ) & AX T1A_occupied -- If a train did not come from T3B or T2A and T1A is occupied it came from outside the system
+  ) -> AF(P1A_locked_straight | P1A_locked_curved) -- Then eventually P1A must become locked
+)
